@@ -1,0 +1,49 @@
+Aplikasi billing rental PlayStation desktop berbasis Java Swing dan SQLite untuk rental PS3, PS4, PS5, dan room VIP. Semua unit tampil dalam satu layar dengan timer besar yang berjalan: sisa waktu untuk paket atau lama main untuk open billing, lengkap dengan biaya berjalan. Kartu unit berubah kuning saat waktu hampir habis dan magenta berkedip saat habis, disertai bunyi, sehingga penjaga tidak kecolongan.
+
+Operator bisa menambah waktu, mencatat jajan (mie, minuman, snack) yang langsung mengurangi stok, menjeda waktu saat pemain salat atau makan, memindahkan pemain ke unit lain, lalu menagih dengan diskon, tunai atau QRIS, dan struk thermal. Pemilik mendapat laporan pendapatan sewa dan jajan, okupansi tiap unit, jam ramai, paket dan jajan terlaris. Tampilan bergaya arcade gelap dengan font Chakra Petch dan VT323, jalan offline tanpa XAMPP.
+Cara kerja
+Admin mengatur jenis konsol beserta tarif per jam, daftar unit (kode, TV, jumlah stik, status servis), paket waktu per konsol, menu jajan, serta aturan pembulatan: blok menit, minimal main, toleransi lewat waktu, dan peringatan sebelum habis. Semua aturan hitung ada di kelas Tarif yang murni sehingga mudah diuji dan diubah.
+
+Saat sesi dimulai, waktu mulai disimpan sebagai epoch milidetik di database. Lama main dihitung dari waktu mulai dikurangi total jeda, sehingga timer tetap akurat walau aplikasi ditutup, komputer mati, atau ganti shift. Index unik di database menjamin satu unit tidak pernah punya dua sesi berjalan, termasuk saat dua komputer operator memakai file database yang sama. Paket yang dilewati lebih dari toleransi otomatis ditagih kelebihannya dengan tarif open billing.
+
+Saat stop, tagihan dihitung ulang di service dari data sesi dan jam saat itu: sewa, jajan, diskon, total, dan kembalian, lalu struk 58 mm bisa dicetak. Setiap aksi (mulai, tambah waktu, jeda, lanjut, pindah, bayar, batal) tercatat di log sesi. Admin dapat membatalkan transaksi dengan alasan dan stok jajan dikembalikan. Laporan menyajikan pendapatan harian, okupansi per unit terhadap jam operasional, jam ramai, paket dan jajan terlaris, serta ekspor CSV.
+Fitur
+Layar unit: grid semua unit dengan timer besar gaya layar piksel dan biaya berjalan
+Mode paket (1 jam, 2 jam, paket malam, room VIP) dan open billing per jam
+Tambah waktu dengan paket tambahan
+Jeda dan lanjut, waktu jeda tidak dihitung
+Pindah unit dengan sisa waktu dan jajan ikut pindah
+Peringatan hampir habis (kuning) dan habis (magenta berkedip) dengan bunyi dan notifikasi
+Timer tetap akurat walau aplikasi ditutup atau ganti shift
+Jajan per unit dengan stok otomatis berkurang, hapus jajan salah input
+Penjualan jajan langsung untuk pelanggan yang tidak main
+Stop & bayar: rincian sewa dan jajan, diskon, tunai atau QRIS, tombol uang pas dan pecahan, kembalian
+Struk thermal 58 mm dengan pratinjau dan cetak ulang
+Aturan tarif bisa diatur: blok pembulatan, minimal main, toleransi, peringatan
+Status unit servis (stik rusak, TV mati)
+Riwayat transaksi dengan log aktivitas setiap sesi
+Pembatalan transaksi oleh admin dengan alasan, stok jajan kembali
+Laporan pendapatan sewa vs jajan, grafik harian, jam ramai
+Okupansi per unit, paket terlaris, jajan terlaris, ekspor CSV aman Excel
+Kelola konsol & tarif, unit, paket, menu jajan, stok masuk
+Dua peran: Admin dan Operator, password PBKDF2, kunci akun setelah 5 kali salah
+Data contoh 10 unit, transaksi 30 hari, dan 6 sesi yang sedang main
+Java 17 + Swing + SQLite + Maven, dilengkapi 15 tes JUnit
+Panduan instalasi
+Kebutuhan: JDK 17 atau lebih baru dan Apache Maven (atau IDE NetBeans / IntelliJ IDEA). Internet hanya diperlukan saat build pertama.
+
+Ekstrak ZIP ke folder mana saja, misal D:\BillingPS.
+
+Windows: klik dua kali jalankan.bat. Linux/macOS: jalankan ./jalankan.sh. Lewat IDE: buka folder sebagai proyek Maven, jalankan kelas id.papicode.billingps.App.
+
+Login dengan admin / admin123.
+
+Pilih Isi data contoh bila ingin mencoba dengan 10 unit, paket, menu jajan, dan transaksi 30 hari, atau abaikan untuk mulai dari nol.
+
+Buka Unit & Tarif: atur jenis konsol dan tarif per jam, daftar unit, dan paket waktu. Buka Menu & Stok Jajan untuk menu dan stok.
+
+Buka Pengaturan: nama rental, alamat, catatan struk, jam buka-tutup, dan aturan pembulatan. Wajib ganti password admin. Buat akun operator di Pengguna.
+
+Mulai melayani dari Layar Unit: klik unit kosong, pilih paket atau open billing.
+
+Database tersimpan di data/billing-ps.db. Cadangkan rutin lewat Pengaturan → Cadangkan sekarang.
